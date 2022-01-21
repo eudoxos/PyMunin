@@ -3,7 +3,7 @@
 """
 
 import re
-import util
+from . import util
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"
@@ -192,7 +192,7 @@ class ProcessInfo:
             lines = result['stats']
             if len(lines) > 1:
                 for cols in lines:
-                    stats[cols[key_idx]] = dict(zip(headers, cols[:num_cols]))
+                    stats[cols[key_idx]] = dict(list(zip(headers, cols[:num_cols])))
             return stats
         else:
             return None
@@ -218,8 +218,8 @@ class ProcessInfo:
         
         """
         procs = self.getProcList(['stat',], threads=threads, **kwargs)
-        status = dict(zip(procStatusNames.values(), 
-                          [0,] * len(procStatusNames)))
+        status = dict(list(zip(list(procStatusNames.values()), 
+                          [0,] * len(procStatusNames))))
         prio = {'high': 0, 'low': 0, 'norm': 0, 'locked_in_mem': 0}
         total = 0
         locked_in_mem = 0

@@ -46,7 +46,7 @@ class FilesystemInfo:
         @return: List of filesystems.
         
         """
-        return self._fstypeDict.keys()
+        return list(self._fstypeDict.keys())
     
     def getFStype(self, fs):
         """Return the type of the filesystem fs.

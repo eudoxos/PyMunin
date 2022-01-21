@@ -4,8 +4,8 @@ Telephony Interfaces.
 """
 
 import re
-import util
-import netiface
+from . import util
+from . import netiface
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"

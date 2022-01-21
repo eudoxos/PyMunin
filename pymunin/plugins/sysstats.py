@@ -93,7 +93,7 @@ class MuninSysStatsPlugin(MuninPlugin):
                 args='--base 1000 --lower-limit 0')
             for field in ['system', 'user', 'nice', 'idle', 'iowait', 
                           'irq', 'softirq', 'steal', 'guest']:
-                if self._cpustats.has_key(field):
+                if field in self._cpustats:
                     graph.addField(field, field, type='DERIVE', min=0, 
                                    cdef='%s,10,/' % field, draw='AREASTACK')
             self.appendGraph('sys_cpu_util', graph)
@@ -103,7 +103,7 @@ class MuninSysStatsPlugin(MuninPlugin):
                 self._memstats = self._sysinfo.getMemoryUse()
             self._memstats['MemUsed'] = self._memstats['MemTotal']
             for field in ['MemFree', 'SwapCached', 'Buffers', 'Cached']:
-                if self._memstats.has_key(field):
+                if field in self._memstats:
                     self._memstats['MemUsed'] -= self._memstats[field]
             self._memstats['SwapUsed'] = (self._memstats['SwapTotal'] 
                                           - self._memstats['SwapFree'])
@@ -112,19 +112,19 @@ class MuninSysStatsPlugin(MuninPlugin):
                 args='--base 1024 --lower-limit 0')
             for field in ['MemUsed', 'SwapCached', 'Buffers', 'Cached', 
                           'MemFree', 'SwapUsed']:
-                if self._memstats.has_key(field):
+                if field in self._memstats:
                     graph.addField(field, field, type='GAUGE', draw='AREASTACK')
             self.appendGraph('sys_mem_util', graph)
         
         if self.graphEnabled('sys_mem_avail'):
             if self._memstats is None:
                 self._memstats = self._sysinfo.getMemoryUse()
-            if self._memstats.has_key('Hugepagesize'):
+            if 'Hugepagesize' in self._memstats:
                 self._memstats['MemHugePages'] = (self._memstats['HugePages_Total'] 
                                                   * self._memstats['Hugepagesize']) 
             self._memstats['MemKernel'] = self._memstats['MemTotal']
             for field in ['MemHugePages', 'Active', 'Inactive', 'MemFree']:
-                if self._memstats.has_key(field):
+                if field in self._memstats:
                     self._memstats['MemKernel'] -= self._memstats[field]
             graph = MuninGraph('Memory Utilization - Active/Inactive (bytes)', 
                 self._category,
@@ -132,14 +132,14 @@ class MuninSysStatsPlugin(MuninPlugin):
                 args='--base 1024 --lower-limit 0')
             for field in ['MemKernel', 'MemHugePages', 'Active', 'Inactive', 
                           'MemFree']:
-                if self._memstats.has_key(field):
+                if field in self._memstats:
                     graph.addField(field, field, type='GAUGE', draw='AREASTACK')
             self.appendGraph('sys_mem_avail', graph)
         
         if self.graphEnabled('sys_mem_huge'):
             if self._memstats is None:
                 self._memstats = self._sysinfo.getMemoryUse()
-            if (self._memstats.has_key('Hugepagesize') 
+            if ('Hugepagesize' in self._memstats 
                 and self._memstats['HugePages_Total'] > 0):
                 graph = MuninGraph('Memory Utilization - Huge Pages (bytes)', 
                     self._category,
@@ -147,7 +147,7 @@ class MuninSysStatsPlugin(MuninPlugin):
                     args='--base 1024 --lower-limit 0')
                 for field in ['Rsvd', 'Surp', 'Free']:
                     fkey = 'HugePages_' + field
-                    if self._memstats.has_key(fkey):
+                    if fkey in self._memstats:
                         graph.addField(field, field, type='GAUGE', 
                                        draw='AREASTACK')
                 self.appendGraph('sys_mem_huge', graph)
@@ -180,7 +180,7 @@ class MuninSysStatsPlugin(MuninPlugin):
                     'Context Switches per second.']
             idx = 0
             for field in ['intr', 'softirq', 'ctxt']:
-                if self._procstats.has_key(field):
+                if field in self._procstats:
                     graph.addField(field, labels[idx], type='DERIVE', min=0,
                                    draw='LINE2', info=infos[idx])
                     idx += 1
@@ -232,7 +232,7 @@ class MuninSysStatsPlugin(MuninPlugin):
             if self.hasGraph('sys_mem_huge'):
                 for field in ['Rsvd', 'Surp', 'Free']:
                     fkey = 'HugePages_' + field
-                    if self._memstats.has_key(fkey):
+                    if fkey in self._memstats:
                         self.setGraphVal('sys_mem_huge', field, 
                             self._memstats[fkey] * self._memstats['Hugepagesize'])
         if self.hasGraph('sys_processes'):

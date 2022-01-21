@@ -92,7 +92,7 @@ class SystemInfo:
         headers = ['user', 'nice', 'system', 'idle', 'iowait', 'irq', 'softirq', 'steal', 'guest']
         arr = line.split()
         if len(arr) > 1 and arr[0] == 'cpu':
-            return dict(zip(headers[0:len(arr)], [(float(t) / hz) for t in arr[1:]]))
+            return dict(list(zip(headers[0:len(arr)], [(float(t) / hz) for t in arr[1:]])))
         return info_dict
     
     def getProcessStats(self):
@@ -158,7 +158,7 @@ class SystemInfo:
             colnames = [name.lower() for name in lines[0].split()]
             for line in lines[1:]:
                 cols = line.split()
-                info_dict[cols[0]] = dict(zip(colnames[1:], cols[1:]))
+                info_dict[cols[0]] = dict(list(zip(colnames[1:], cols[1:])))
         return info_dict
     
     def getVMstats(self):

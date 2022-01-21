@@ -5,7 +5,7 @@ The statistics are obtained by running the command varnishstats.
 """
 
 import re
-import util
+from . import util
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"

@@ -110,7 +110,7 @@ class MuninProcStatsPlugin(MuninPlugin):
                                     ('thread', True)):
             graph_name = '%s_status' % prefix
             if self.hasGraph(graph_name):
-                if not stats.has_key(prefix):
+                if prefix not in stats:
                     stats[prefix] = proc_info.getProcStatStatus(is_thread)
                 for (fname, stat_key) in (
                     ('unint_sleep', 'uninterruptable_sleep'),
@@ -122,7 +122,7 @@ class MuninProcStatsPlugin(MuninPlugin):
                                      stats[prefix]['status'].get(stat_key))
             graph_name = '%s_prio' % prefix
             if self.hasGraph(graph_name):
-                if not stats.has_key(prefix):
+                if prefix not in stats:
                     stats[prefix] = proc_info.getProcStatStatus(is_thread)
                 for (fname, stat_key) in (
                     ('high', 'high'),

@@ -7,9 +7,9 @@ remote Squid Proxy Servers.
 
 import sys
 import re
-import httplib
-import urllib
-import util
+import http.client
+import urllib.request, urllib.parse, urllib.error
+from . import util
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"
@@ -76,7 +76,7 @@ class SquidInfo:
             self._port = defaultSquidPort
         self._httpHeaders = {'Accept': '*/*',}
         if user is not None and password is not None:
-            authstr = "%s:%s" % (urllib.quote(user), urllib.quote(password))
+            authstr = "%s:%s" % (urllib.parse.quote(user), urllib.parse.quote(password))
             self._httpHeaders['Authorization'] = "Basic %s" % authstr
             self._httpHeaders['Proxy-Authorization'] = "Basic %s" % authstr
         if autoInit:
@@ -90,9 +90,9 @@ class SquidInfo:
     def _connect(self):
         """Connect to Squid Proxy Manager interface."""
         if sys.version_info[:2] < (2,6):
-            self._conn = httplib.HTTPConnection(self._host, self._port)
+            self._conn = http.client.HTTPConnection(self._host, self._port)
         else:
-            self._conn = httplib.HTTPConnection(self._host, self._port, 
+            self._conn = http.client.HTTPConnection(self._host, self._port, 
                                                 False, defaultTimeout)
         
     def _retrieve(self, map):
@@ -158,11 +158,11 @@ class SquidInfo:
                     mobj = re.match('^(\w[\w\s\(\)]+[\w\)])\s*:\s*(\S.*)$', line)
                     if mobj:
                         section = None
-                        if not section_dict.has_key(section):
+                        if section not in section_dict:
                             section_dict[section] = []
                         section_dict[section].append(line)
                     else:
-                        if not section_dict.has_key('PARSEERROR'):
+                        if 'PARSEERROR' not in section_dict:
                             section_dict['PARSEERROR'] = []
                         section_dict['PARSEERROR'].append(line)   
         return section_dict

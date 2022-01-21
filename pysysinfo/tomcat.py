@@ -7,7 +7,7 @@ remote Apache Tomcat Servers.
 
 import sys
 import re
-import util
+from . import util
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"
@@ -93,7 +93,7 @@ class TomcatInfo:
         node = self._statusxml.find('jvm/memory')
         memstats = {}
         if node is not None:
-            for (key,val) in node.items():
+            for (key,val) in list(node.items()):
                 memstats[key] = util.parse_value(val)
         return memstats
     
@@ -120,7 +120,7 @@ class TomcatInfo:
                             stats = {}
                             node = connnode.find(tag)
                             if node is not None:
-                                for (key,val) in node.items():
+                                for (key,val) in list(node.items()):
                                     if re.search('Time$', key):
                                         stats[key] = float(val) / 1000.0
                                     else:

@@ -124,7 +124,7 @@ class MuninTomcatPlugin(MuninPlugin):
                            "Apache Tomcat Server.", colour='FF0000')
             self.appendGraph('tomcat_memory', graph)
             
-        for (port, stats) in self._tomcatInfo.getConnectorStats().iteritems():
+        for (port, stats) in self._tomcatInfo.getConnectorStats().items():
             proto = stats['proto']
             if self.portIncluded(port):
                 if self.graphEnabled('tomcat_threads'):
@@ -201,7 +201,7 @@ class MuninTomcatPlugin(MuninPlugin):
                              stats['total'] - stats['free'])
             self.setGraphVal('tomcat_memory', 'free', stats['free'])
             self.setGraphVal('tomcat_memory', 'max', stats['max'])
-        for (port, stats) in self._tomcatInfo.getConnectorStats().iteritems():
+        for (port, stats) in self._tomcatInfo.getConnectorStats().items():
             thrstats = stats['threadInfo']
             reqstats = stats['requestInfo']
             if self.portIncluded(port):

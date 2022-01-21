@@ -5,7 +5,7 @@
 import sys
 import re
 import subprocess
-import urllib, urllib2
+import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse
 import socket
 import telnetlib
 
@@ -96,7 +96,7 @@ def exec_command(args, env=None):
                                stderr=subprocess.PIPE, 
                                bufsize=buffSize,
                                env=env)
-    except OSError, e:
+    except OSError as e:
         raise Exception("Execution of command failed.\n",
                         "  Command: %s\n  Error: %s" % (' '.join(args), str(e)))
     out, err = cmd.communicate(None)
@@ -108,14 +108,14 @@ def exec_command(args, env=None):
 
 def get_url(url, user=None, password=None, params=None, use_post=False):
     if user is not None and password is not None:
-        pwdmgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        pwdmgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         pwdmgr.add_password(None, url, user, password)
-        auth_handler = urllib2.HTTPBasicAuthHandler(pwdmgr)
-        opener = urllib2.build_opener(auth_handler)
+        auth_handler = urllib.request.HTTPBasicAuthHandler(pwdmgr)
+        opener = urllib.request.build_opener(auth_handler)
     else:
-        opener = urllib2.build_opener()
+        opener = urllib.request.build_opener()
     if params is not None:
-        req_params = urllib.urlencode(params)
+        req_params = urllib.parse.urlencode(params)
         if use_post:
             req_url = url
             data = req_params
@@ -130,7 +130,7 @@ def get_url(url, user=None, password=None, params=None, use_post=False):
             resp = opener.open(req_url, data)
         else:
             resp = opener.open(req_url, data, timeoutHTTP)
-    except urllib2.URLError, e:
+    except urllib.error.URLError as e:
         raise Exception("Retrieval of URL failed.\n"
                         "  url: %s\n  Error: %s" % (url, str(e)))
     return socket_read(resp)
@@ -160,7 +160,7 @@ class NestedDict(dict):
             curr_dict = self
             last_key = keys.pop()
             for key in keys:
-                if not curr_dict.has_key(key) or not isinstance(curr_dict[key], 
+                if key not in curr_dict or not isinstance(curr_dict[key], 
                                                                 NestedDict):
                     curr_dict[key] = type(self)()
                 curr_dict = curr_dict[key]
@@ -198,7 +198,7 @@ class SoftwareVersion(tuple):
         may end with any string.
         
         """
-        if isinstance(version, basestring):
+        if isinstance(version, str):
             mobj = re.match('(?P<version>\d+(\.\d+)*)(?P<suffix>.*)$', version)
             if mobj:
                 version = [int(i) for i in mobj.groupdict()['version'].split('.')]
@@ -243,7 +243,7 @@ class TableFilter:
         @param ignore_case: Case insensitive matching will be used if True.
         
         """
-        if isinstance(patterns, basestring):
+        if isinstance(patterns, str):
             patt_list = (patterns,)
         elif isinstance(patterns, (tuple, list)):
             patt_list = list(patterns)
@@ -269,7 +269,7 @@ class TableFilter:
         @param column: The column header.
         
         """
-        if self._filters.has_key(column):
+        if column in self._filters:
             del self._filters[column]
             
     def registerFilters(self, **kwargs):
@@ -289,7 +289,7 @@ class TableFilter:
                                          with any regex in list of values 
                                          using case insensitive match.
         """
-        for (key, patterns) in kwargs.items():
+        for (key, patterns) in list(kwargs.items()):
             if key.endswith('_regex'):
                 col = key[:-len('_regex')]
                 is_regex = True
@@ -314,7 +314,7 @@ class TableFilter:
         """
         result = []
         column_idxs = {}
-        for column in self._filters.keys():
+        for column in list(self._filters.keys()):
             try:
                 column_idxs[column] = headers.index(column)
             except ValueError:
@@ -322,7 +322,7 @@ class TableFilter:
         for row in table:
             for (column, (patterns, 
                           is_regex, 
-                          ignore_case)) in self._filters.items():
+                          ignore_case)) in list(self._filters.items()):
                 col_idx = column_idxs[column]
                 col_val = row[col_idx]
                 if is_regex:

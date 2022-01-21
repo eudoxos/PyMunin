@@ -5,7 +5,7 @@ remote PostgreSQL Servers.
 
 """
 
-import util
+from . import util
 import psycopg2.extras
 
 __author__ = "Ali Onur Uyar"
@@ -97,7 +97,7 @@ class PgInfo:
         """
         dbstats = {}
         for row in rows:
-            dbstats[row[0]] = dict(zip(headers[1:], row[1:]))
+            dbstats[row[0]] = dict(list(zip(headers[1:], row[1:])))
         return dbstats
     
     def _createTotalsDict(self, headers, rows):
@@ -109,7 +109,7 @@ class PgInfo:
             
         """
         totals = [sum(col) for col in zip(*rows)[1:]]
-        return dict(zip(headers[1:], totals))
+        return dict(list(zip(headers[1:], totals)))
     
     def _simpleQuery(self, query):
         """Executes simple query which returns a single column.
@@ -228,8 +228,8 @@ class PgInfo:
         @return: : Dictionary of stats.
         
         """
-        info_dict = {'all': dict(zip(self.lockModes, (0,) * len(self.lockModes))),
-                     'wait': dict(zip(self.lockModes, (0,) * len(self.lockModes)))}
+        info_dict = {'all': dict(list(zip(self.lockModes, (0,) * len(self.lockModes)))),
+                     'wait': dict(list(zip(self.lockModes, (0,) * len(self.lockModes))))}
         cur = self._conn.cursor()
         cur.execute("SELECT TRIM(mode, 'Lock'), granted, COUNT(*) FROM pg_locks "
                     "GROUP BY TRIM(mode, 'Lock'), granted;")
@@ -300,7 +300,7 @@ class PgInfo:
                 pg_xlogfile_name(pg_current_xlog_location());""")
             headers = ('xlog_location', 'xlog_filename')
         row = cur.fetchone()
-        info_dict = dict(zip(headers, row))
+        info_dict = dict(list(zip(headers, row)))
         if inRecovery is not None:
             info_dict['in_recovery'] = inRecovery
         return info_dict
@@ -322,7 +322,7 @@ class PgInfo:
                         % ','.join(cols))
             rows = cur.fetchall()
             for row in rows:
-                info_dict[row[0]] = dict(zip(cols[1:], row[1:]))
+                info_dict[row[0]] = dict(list(zip(cols[1:], row[1:])))
         else:
             return None
         return info_dict

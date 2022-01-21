@@ -43,12 +43,12 @@ class NetIfaceInfo:
             if mobj:
                 iface = mobj.group(1)
                 statline = mobj.group(2)
-                info_dict[iface] = dict(zip(
+                info_dict[iface] = dict(list(zip(
                     ('rxbytes', 'rxpackets', 'rxerrs', 'rxdrop', 'rxfifo',
                      'rxframe', 'rxcompressed', 'rxmulticast',
                      'txbytes', 'txpackets', 'txerrs', 'txdrop', 'txfifo',
                      'txcolls', 'txcarrier', 'txcompressed'),
-                    [int(x) for x in statline.split()]))
+                    [int(x) for x in statline.split()])))
                     
         return info_dict
     
@@ -81,7 +81,7 @@ class NetIfaceInfo:
             mobj = re.match('^\s+(inet|inet6)\s+([\d\.\:A-Za-z]+)\/(\d+)($|\s+.*\S)\s*$', line)
             if mobj:
                 proto = mobj.group(1)
-                if not conf[iface].has_key(proto):
+                if proto not in conf[iface]:
                     conf[iface][proto] = []
                 addrinfo = {}
                 addrinfo['addr'] = mobj.group(2).lower()
@@ -109,5 +109,5 @@ class NetIfaceInfo:
         if len(lines) > 1:
             headers = [col.lower() for col in lines[1].split()]
             for line in lines[2:]:
-                routes.append(dict(zip(headers, line.split())))
+                routes.append(dict(list(zip(headers, line.split()))))
         return routes

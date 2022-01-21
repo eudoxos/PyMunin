@@ -5,7 +5,7 @@ that must be placed in the Web Server Document Root Directory.
 
 """
 
-import util
+from . import util
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"
@@ -87,7 +87,7 @@ class APCinfo:
         self._statusDict = {}
         for line in response.splitlines():
             cols = line.split(':')
-            if not self._statusDict.has_key(cols[0]):
+            if cols[0] not in self._statusDict:
                 self._statusDict[cols[0]] = {}
             self._statusDict[cols[0]][cols[1]] = util.parse_value(cols[2])
     

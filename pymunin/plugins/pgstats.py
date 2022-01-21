@@ -248,7 +248,7 @@ class MuninPgPlugin(MuninPlugin):
                              'ShrUpdExcl', 'RwExcl', 'RwShr', 'AccessShr',):
                     graph.addField(mode, mode, draw='AREASTACK', type='GAUGE', 
                                    min=0, 
-                                   info="Number of locks of mode: %s" % mode_iter.next())
+                                   info="Number of locks of mode: %s" % next(mode_iter))
                 self.appendGraph(graph_name, graph)
         
         if self._detailGraphs:        
@@ -394,13 +394,13 @@ class MuninPgPlugin(MuninPlugin):
         if self.hasGraph('pg_connections'):
             limit = self._dbconn.getParam('max_connections')
             self.setGraphVal('pg_connections', 'max_conn', limit)
-            for (db, dbstats) in databases.iteritems():
+            for (db, dbstats) in databases.items():
                 if self.dbIncluded(db):
                     self.setGraphVal('pg_connections', db, 
                                      dbstats['numbackends'])
             self.setGraphVal('pg_connections', 'total', totals['numbackends'])
         if self.hasGraph('pg_diskspace'):
-            for (db, dbstats) in databases.iteritems():
+            for (db, dbstats) in databases.items():
                 if self.dbIncluded(db):
                     self.setGraphVal('pg_diskspace', db, dbstats['disk_size'])
             self.setGraphVal('pg_diskspace', 'total', totals['disk_size'])
@@ -427,7 +427,7 @@ class MuninPgPlugin(MuninPlugin):
                 for mode in ('AccessExcl', 'Excl', 'ShrRwExcl', 'Shr', 
                              'ShrUpdExcl', 'RwExcl', 'RwShr', 'AccessShr',):
                     self.setGraphVal(graph_name, mode, 
-                                     lock_stats[lock_state].get(mode_iter.next()))
+                                     lock_stats[lock_state].get(next(mode_iter)))
         
         stats = None               
         if self.hasGraph('pg_checkpoints'):
@@ -448,7 +448,7 @@ class MuninPgPlugin(MuninPlugin):
                              stats.get('buffers_checkpoint'))
             
         if self._detailGraphs:
-            for (db, dbstats) in databases.iteritems():
+            for (db, dbstats) in databases.items():
                 if self.dbIncluded(db):
                     if self.hasGraph('pg_blockread_detail'):
                         self.setGraphVal('pg_blockread_detail', db, 
@@ -480,7 +480,7 @@ class MuninPgPlugin(MuninPlugin):
                     self.setGraphVal('pg_repl_conflicts', field, 
                                      repl_stats['totals'].get("confl_%s" % field))
             if self._detailGraphs and self.hasGraph('pg_repl_conflicts_detail'):
-                for (db, dbstats) in repl_stats['databases'].iteritems():
+                for (db, dbstats) in repl_stats['databases'].items():
                     if self.dbIncluded(db):
                         self.setGraphVal('pg_repl_conflicts_detail', db,
                                          sum(dbstats.values()))

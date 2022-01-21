@@ -5,8 +5,8 @@
 import re
 import os
 import stat
-from filesystem import FilesystemInfo
-from system import SystemInfo
+from .filesystem import FilesystemInfo
+from .system import SystemInfo
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"
@@ -150,7 +150,7 @@ class DiskIOinfo:
         """Initialize swap partition to device mappings."""
         self._swapList = []
         sysinfo = SystemInfo()
-        for (swap,attrs) in sysinfo.getSwapStats().iteritems():
+        for (swap,attrs) in sysinfo.getSwapStats().items():
             if attrs['type'] == 'partition':
                 dev = self._getUniqueDev(swap)
                 if dev is not None:
@@ -171,18 +171,18 @@ class DiskIOinfo:
             cols = line.split()
             dev = cols.pop(2)
             if len(cols) == 13:
-                self._diskStats[dev] = dict(zip(
+                self._diskStats[dev] = dict(list(zip(
                     ('major', 'minor',
                      'rios', 'rmerges', 'rsect', 'rticks',
                      'wios', 'wmerges', 'wsect', 'wticks',
                      'ios_active', 'totticks', 'rqticks'),
-                    [int(x) for x in cols]))
+                    [int(x) for x in cols])))
             elif len(cols) == 6:
-                self._diskStats[dev] = dict(zip(
+                self._diskStats[dev] = dict(list(zip(
                     ('major', 'minor',
                      'rios', 'rsect',
                      'wios', 'wsect'),
-                    [int(x) for x in cols]))
+                    [int(x) for x in cols])))
             else:
                 continue
             self._diskStats[dev]['rbytes'] = (
@@ -207,7 +207,7 @@ class DiskIOinfo:
             if devclass is not None:
                 devdir = os.path.join(sysfsBlockdevDir, dev)
                 if os.path.isdir(devdir):
-                    if not self._devClassTree.has_key(devclass):
+                    if devclass not in self._devClassTree:
                         self._devClassTree[devclass] = []
                     self._devClassTree[devclass].append(dev)
                     self._mapDevType[dev] = devclass
@@ -222,7 +222,7 @@ class DiskIOinfo:
                 idx += 1 
             for dev in basedevs[idx:]:
                 if re.match("%s(\d+|p\d+)$" % dev, partdev):
-                    if not self._partitionTree.has_key(dev):
+                    if dev not in self._partitionTree:
                         self._partitionTree[dev] = []
                     self._partitionTree[dev].append(partdev)
                     self._mapDevType[partdev] = 'part'
@@ -243,7 +243,7 @@ class DiskIOinfo:
         @return: List of device names.
         
         """
-        return self._diskStats.keys()
+        return list(self._diskStats.keys())
     
     def getDiskList(self):
         """Returns list of disk devices.
@@ -293,7 +293,7 @@ class DiskIOinfo:
         """
         if self._partList is None:
             self._partList = []
-            for (disk,parts) in self.getPartitionDict().iteritems():
+            for (disk,parts) in self.getPartitionDict().items():
                 for part in parts:
                     self._partList.append((disk,part))
         return self._partList
@@ -314,7 +314,7 @@ class DiskIOinfo:
         @return: List of VGs.
         
         """
-        return self.getVGdict().keys()
+        return list(self.getVGdict().keys())
         
     def getLVtupleList(self):
         """Returns list of LV Devices.
@@ -324,7 +324,7 @@ class DiskIOinfo:
         """
         if self._vgTree is None:
             self._initDMinfo()
-        return self._mapLVtuple2dm.keys()
+        return list(self._mapLVtuple2dm.keys())
     
     def getLVnameList(self):
         """Returns list of LV Devices.
@@ -334,7 +334,7 @@ class DiskIOinfo:
         """
         if self._vgTree is None:
             self._initDMinfo()
-        return self._mapLVname2dm.keys()
+        return list(self._mapLVname2dm.keys())
 
     def getFilesystemDict(self):
         """Returns map of filesystems to disk devices.
@@ -352,7 +352,7 @@ class DiskIOinfo:
         @return: List of filesystem paths.
         
         """
-        return self.getFilesystemDict().keys()
+        return list(self.getFilesystemDict().keys())
 
     def getSwapList(self):
         """Returns list of disk devices used for paging.
@@ -375,7 +375,7 @@ class DiskIOinfo:
         if devtype is not None:
             if self._devClassTree is None:
                 self._initDevClasses()
-            if devtype <> self._mapDevType.get(dev):
+            if devtype != self._mapDevType.get(dev):
                 return None
         return self._diskStats.get(dev) 
 

@@ -5,7 +5,7 @@ that must be placed in the Web Server Document Root Directory.
 
 """
 
-import util
+from . import util
 import json
 
 __author__ = "Preston M."

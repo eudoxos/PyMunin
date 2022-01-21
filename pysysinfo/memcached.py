@@ -6,7 +6,7 @@ The statistics are obtained by connecting to and querying the Memcached.
 
 import re
 import os
-import util
+from . import util
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"
@@ -118,7 +118,7 @@ class MemcachedInfo:
                 mobj = re.match('STAT\s(\w+:)?(\d+):(\w+)\s(\S+)$',  line)
                 if mobj:
                     (slab, key, val) = mobj.groups()[-3:]      
-                    if not info_dict['slabs'].has_key(slab):
+                    if slab not in info_dict['slabs']:
                         info_dict['slabs'][slab] = {}
                     info_dict['slabs'][slab][key] = util.parse_value(val, True)
         return info_dict

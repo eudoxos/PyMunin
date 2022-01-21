@@ -6,7 +6,7 @@ page of local and/or remote Apache Web Servers.
 """
 
 import re
-import util
+from . import util
 
 __author__ = "Ali Onur Uyar"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"
@@ -75,7 +75,7 @@ class ApacheInfo:
             mobj = re.match('(\S.*\S)\s*:\s*(\S+)\s*$', line)
             if mobj:
                 self._statusDict[mobj.group(1)] = util.parse_value(mobj.group(2))
-        if self._statusDict.has_key('Scoreboard'):
+        if 'Scoreboard' in self._statusDict:
             self._statusDict['MaxWorkers'] = len(self._statusDict['Scoreboard'])
     
     def getServerStats(self):

@@ -532,12 +532,12 @@ class MuninMySQLplugin(MuninPlugin):
                 stats = {}
                 for field in self.getGraphFieldList('mysql_proc_status'):
                     stats[field] = 0
-                for (k, v) in self._procStatus.items():
-                    if stats.has_key(k):
+                for (k, v) in list(self._procStatus.items()):
+                    if k in stats:
                         stats[k] = v
                     else:
                         stats['unknown'] += v
-                for (k,v) in stats.items():
+                for (k,v) in list(stats.items()):
                     self.setGraphVal('mysql_proc_status', k, v)
         if self.hasGraph('mysql_proc_db'):
             self._procDB = self._dbconn.getProcessDatabase()
